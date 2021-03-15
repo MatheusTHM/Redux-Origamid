@@ -11,6 +11,8 @@
 
 <h1>Total: <span id='total'></span></h1>
 <button id='button'>Incrementar</button>
+<button id='abrir'>Abrir</button>
+<button id='fechar'>Fechar</button>
 
 <body>
 
@@ -18,6 +20,8 @@
     //Constantes
     const INCREMENTAR = 'INCREMENTAR';
     const SOMAR = 'SOMAR';
+    const ABRIR = 'ABRIR';
+    const FECHAR = 'FECHAR';
 
     //Action Creator
     function incrementar() {
@@ -28,39 +32,65 @@
       return { type: SOMAR, payload }
     }
 
-
-    const initialState = 10;
-    function reducer(state = initialState, action) {
-      if (action.type === INCREMENTAR) {
-        return state + 1;
-      }
-      if (action.type === SOMAR) {
-        return state + action.payload;
-      }
-      return state;
+    function abrir() {
+      return { type: ABRIR }
     }
 
+    function fechar() {
+      return { type: FECHAR }
+    }
+
+
+    const initialState = 0;
+    function contador(state = initialState, action) {
+      switch (action.type) {
+        case INCREMENTAR:
+          return state + 1;
+        case SOMAR:
+          return state + action.payload;
+        default:
+          return state;
+      }
+    }
+
+    function modal(state = false, action) {
+      switch (action.type) {
+        case ABRIR:
+          return true;
+        case FECHAR:
+          return false;
+        default:
+          return state;
+      }
+    }
+
+    const reducer = Redux.combineReducers({ contador, modal })
     const store = Redux.createStore(reducer)
 
 
     function render() {
-      const state = store.getState()
+      const { contador, modal } = store.getState()
       const total = document.getElementById('total');
-      total.innerText = state;
+      total.innerText = contador;
+      if (modal) {
+        total.style.display = 'inline-block'
+      } else {
+        total.style.display = 'none'
+      }
     }
     render()
 
-    const unsub = store.subscribe(render);
-    // unsub()
-
-    const unsub2 = store.subscribe(() => {
-      console.log('Atualizou');
-    })
-    unsub2();         //Desativando o subscribe
-
+    store.subscribe(render);
+    // store.dispatch(somar(25))
 
     const button = document.getElementById('button');
     button.addEventListener('click', () => store.dispatch(incrementar()))
+
+    const abre = document.getElementById('abrir');
+    const fecha = document.getElementById('fechar');
+    abre.addEventListener('click', () => store.dispatch(abrir()))
+    fecha.addEventListener('click', () => store.dispatch(fechar()))
+
   </script>
 </body>
 

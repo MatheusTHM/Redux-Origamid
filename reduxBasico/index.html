@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<h1>Total: <span id='total'></span></h1>
+<button id='button'>Incrementar</button>
+
+<body>
+
+  <script>
+    //Constantes
+    const INCREMENTAR = 'INCREMENTAR';
+    const SOMAR = 'SOMAR';
+
+    //Action Creator
+    function incrementar() {
+      return { type: INCREMENTAR }
+    }
+
+    function somar(payload) {
+      return { type: SOMAR, payload }
+    }
+
+
+    const initialState = 10;
+    function reducer(state = initialState, action) {
+      if (action.type === INCREMENTAR) {
+        return state + 1;
+      }
+      if (action.type === SOMAR) {
+        return state + action.payload;
+      }
+      return state;
+    }
+
+    const store = Redux.createStore(reducer)
+
+
+    function render() {
+      const state = store.getState()
+      const total = document.getElementById('total');
+      total.innerText = state;
+    }
+    render()
+
+    const unsub = store.subscribe(render);
+    // unsub()
+
+    const unsub2 = store.subscribe(() => {
+      console.log('Atualizou');
+    })
+    unsub2();         //Desativando o subscribe
+
+
+    const button = document.getElementById('button');
+    button.addEventListener('click', () => store.dispatch(incrementar()))
+  </script>
+</body>
+
+</html>

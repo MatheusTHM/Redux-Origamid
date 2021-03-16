@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="../immer/immer.umd.production.min.js"></script>
+  <script src="../redux.min.js"></script>
+</head>
+
+<p>Nome: <span id='nome'></span></p>
+<p>Email: <span id='email'></span></p>
+<p>Tempo restante: <span id='tempo'></span></p>
+<p>Aulas completas: <span id='curso'></span>/4</p>
+
+<body>
+  <script type="module">
+    import store from './store/configureStore.js'
+    import { incrementarTempo, reduzirTempo, modificarEmail } from './store/aluno.js'
+    import { completarAula, completarCurso, resetarCurso } from './store/aulas.js'
+
+    function render() {
+      const { aulas, aluno } = store.getState()
+      const nome = document.getElementById('nome');
+      nome.innerText = aluno.nome;
+      const email = document.getElementById('email');
+      email.innerText = aluno.email;
+      const tempo = document.getElementById('tempo');
+      tempo.innerText = aluno.diasRestantes;
+      const curso = document.getElementById('curso');
+      let aulas_completas = aulas.filter((aula) => { return aula.completa === true })
+      curso.innerText = aulas_completas.length;
+    }
+    render();
+
+    store.subscribe(render);
+
+
+
+    store.dispatch(incrementarTempo());
+    store.dispatch(reduzirTempo());
+    // store.dispatch(modificarEmail('@@@@@'));
+    // store.dispatch(completarAula(2));
+    //store.dispatch(completarCurso());
+    //store.dispatch(resetarCurso());
+
+  </script>
+
+</body>
+
+</html>
